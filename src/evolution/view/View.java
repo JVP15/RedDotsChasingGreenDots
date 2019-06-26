@@ -5,15 +5,17 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
+import evolution.app.App;
 import evolution.model.Animal;
 import evolution.model.Carnivore;
+import evolution.model.Herbivore;
 
 public class View
 {
 	public View() throws InterruptedException
 	{
 		frame = new JFrame();
-		frame.setSize(400,400);
+		frame.setSize(App.TOTAL_WIDTH, App.TOTAL_HEIGHT);
 		Carnivore c = new Carnivore(10, 150, 150);
 		
 		Carnivore c2 = new Carnivore(10, 250, 250);
@@ -21,10 +23,11 @@ public class View
 		
 		f.add(c);
 		f.add(c2);
+		f.add(new Herbivore(20));
 		
 		frame.add(f);
 		frame.setVisible(true);
-		Timer t = new Timer(100, event -> {c.action(); c2.action(); frame.repaint();} );
+		Timer t = new Timer(100, event -> {f.gameTick(); frame.repaint();} );
 		t.start();
 		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

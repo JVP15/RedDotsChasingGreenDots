@@ -9,6 +9,7 @@ import javax.swing.JComponent;
 
 import evolution.model.Animal;
 import evolution.model.Carnivore;
+import evolution.model.Herbivore;
 
 public class AnimalGraphic
 {
@@ -17,6 +18,8 @@ public class AnimalGraphic
 		animal = a;
 		if( a.getClass() == Carnivore.class)
 			color = Color.RED;
+		else if( a.getClass() == Herbivore.class)
+			color = Color.GREEN;
 	}
 	
 	public void draw(Graphics g)
@@ -31,6 +34,10 @@ public class AnimalGraphic
 		g2.fill(new Ellipse2D.Double(animal.getX() - animal.getVision() / 2, animal.getY() - animal.getVision() / 2, animal.getVision(), animal.getVision()));
 	}
 	
+	public Animal getAnimal()
+	{
+		return animal;
+	}
 	
 	private Animal animal;
 	private Color color;

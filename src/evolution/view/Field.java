@@ -1,12 +1,16 @@
 package evolution.view;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
 
 import javax.swing.JComponent;
 
 import evolution.model.Animal;
+import evolution.model.Carnivore;
+import evolution.model.Herbivore;
 
 public class Field extends JComponent
 {
@@ -17,18 +21,44 @@ public class Field extends JComponent
 	
 	public void add(Animal a)
 	{
-		animals.add(new AnimalGraphic(a));
+		animals.add(a);
 	}
 	
 	public void paintComponent(Graphics g)
 	{
 		super.paintComponent(g);
 		Graphics2D g2 = (Graphics2D) g;
-		for (AnimalGraphic a : animals)
+		for (Animal a : animals)
 		{
-			a.draw(g2);
+			drawAnimal(a, g2);
 		}
 	}
 	
-	private ArrayList<AnimalGraphic> animals;
+	public void gameTick()
+	{
+		for(Animal a: animals)
+		{
+			a.action();
+		}
+	}
+	
+	private ArrayList<Animal> animals;
+	
+	private void drawAnimal(Animal animal, Graphics2D g2)
+	{
+		Color color;
+		if( animal.getClass() == Carnivore.class)
+			color = Color.RED;
+		else
+			color = Color.GREEN;
+		
+		g2.setColor(color);
+		g2.fill(new Ellipse2D.Double(animal.getX() - Animal.ANIMAL_DIAMETER / 2, animal.getY() - Animal.ANIMAL_DIAMETER / 2, Animal.ANIMAL_DIAMETER, Animal.ANIMAL_DIAMETER));
+
+		Color transparentColor = new Color(color.getRed(), color.getBlue(), color.getGreen(), 60);
+		g2.setColor(transparentColor);
+		g2.fill(new Ellipse2D.Double(animal.getX() - animal.getVision() / 2, animal.getY() - animal.getVision() / 2, animal.getVision(), animal.getVision()));
+	}
+	
+	
 }
