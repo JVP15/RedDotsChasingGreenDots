@@ -9,28 +9,38 @@ public class Herbivore extends Animal
 {
 	public Herbivore(int m)
 	{
-		super(m);	
+		super(m);
+		setFood( (int) (getMaxFood() * .25) );
 		state = HerbivoreState.GRAZING;
+		
 		targetX = getX(); targetY = getY();
 	}
 	
 	public Herbivore(int m, int x, int y)
 	{
 		super(m, x, y);
+		setFood( (int) (getMaxFood() * .25) );
 		state = HerbivoreState.GRAZING;
 		targetX = getX(); targetY = getY();
 	}
 	
 	public void action(LinkedList<Animal> visibleAnimals)
 	{
-		if(!visibleAnimals.isEmpty())
-			state = HerbivoreState.RUNNING;
-		else if(getFood() < getMaxFood() * .25)
+		for(Animal a: visibleAnimals)
+		{
+			if(a.getClass() == Carnivore.class)
+			{
+				state = HerbivoreState.RUNNING;
+				break;
+			}
+		}
+		
+		if(getFood() < getMaxFood() * .25 && state != HerbivoreState.RUNNING)
 			state = HerbivoreState.GRAZING;
+		
 		
 		if(state == HerbivoreState.GRAZING)
 			eat();
-		
 		else if(state == HerbivoreState.ROAMING)
 		{
 			if(getX() == targetX && getY() == targetY)
@@ -42,8 +52,7 @@ public class Herbivore extends Animal
 			}
 			
 			moveTowards(targetX, targetY);
-		}
-		
+		}	
 		else if(state == HerbivoreState.RUNNING)
 		{
 			if(getX() == targetX && getY() == targetY)
@@ -63,7 +72,7 @@ public class Herbivore extends Animal
 	
 	public void eat()
 	{
-		this.changeFood(getMaxFood() / 4);
+		this.changeFood(getMaxFood() / 10);
 		
 		if(getFood() == getMaxFood())
 			state = HerbivoreState.ROAMING;

@@ -68,6 +68,9 @@ public class Field extends JComponent
 		Color transparentColor = new Color(color.getRed(),  color.getGreen(),color.getBlue(), 60);
 		g2.setColor(transparentColor);
 		g2.fill(new Ellipse2D.Double(animal.getX() - animal.getVision() / 2, animal.getY() - animal.getVision() / 2, animal.getVision(), animal.getVision()));
+		
+		g2.setColor(Color.BLACK);
+		g2.drawString(animal.getFood() + "/" + animal.getMaxFood(), animal.getX() - 10, animal.getY() - 10);
 	}
 	
 	private LinkedList<Animal> nearbyAnimals(Animal original)

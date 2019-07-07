@@ -10,7 +10,7 @@ import java.util.Random;
 
 import evolution.mainloop.App;
 
-enum CarnivoreState {HUNTING, CHASING};
+enum CarnivoreState {HUNTING, CHASING, RESTING};
 
 public class Carnivore extends Animal
 {
@@ -18,6 +18,7 @@ public class Carnivore extends Animal
 	public Carnivore(int m)
 	{
 		super(m);	
+		setFood(getMaxFood());
 		state = CarnivoreState.HUNTING;
 		target = null;
 		targetX = getX(); targetY = getY();
@@ -38,12 +39,18 @@ public class Carnivore extends Animal
 			{
 				target = a;
 				state = CarnivoreState.CHASING;
+				break;
 			}	
 		}
 		
-		if(getFood() > getMaxFood() * .75 || ( target != null && !this.canSee(target)))
+		if(getFood() > getMaxFood() * .75 || (target != null && !this.canSee(target)))
 		{
 			state = CarnivoreState.HUNTING;
+			target = null;
+		}
+		else if(target == null && getFood() < getMaxFood() * .25)
+		{
+			state = CarnivoreState.RESTING;
 		}
 		
 		if(state == CarnivoreState.HUNTING)
@@ -71,7 +78,6 @@ public class Carnivore extends Animal
 				eat(target);
 				state = CarnivoreState.HUNTING;
 			}
-			
 		}
 		
 	}

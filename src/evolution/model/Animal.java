@@ -21,7 +21,6 @@ public abstract class Animal
 		x = rand.nextInt(App.TOTAL_WIDTH - 2 * BUFFER)+BUFFER;
 		y = rand.nextInt(App.TOTAL_HEIGHT- 2 * BUFFER)+BUFFER;
 		alive = true;
-		food = (int) (maxFood * .75);
 		
 		allocateStats(evolutionPoints);
 	}
@@ -29,7 +28,6 @@ public abstract class Animal
 	public Animal(int evolutionPoints, int x, int y)
 	{
 		alive = true;
-		food = (int) (maxFood * .5); 
 		this.x = x; this.y = x;
 		
 		allocateStats(evolutionPoints);
@@ -57,7 +55,7 @@ public abstract class Animal
 		else
 			y = y + movY;
 		
-		changeFood(-movement);
+		changeFood(-movement / 4);
 	}
 
 	public int getFood()
@@ -73,7 +71,7 @@ public abstract class Animal
 	public void changeFood(int food)
 	{
 		if(this.food + food > maxFood)
-			food = maxFood;
+			this.food = maxFood;
 		else if(this.food + food < 0 - maxFood / 2)
 			this.kill();
 		else
@@ -151,7 +149,7 @@ public abstract class Animal
 	private int x; private int y;
 	
 	private final int BASE_MOVEMENT = 10;
-	private final int BASE_VISION = 120;
+	private final int BASE_VISION = 180;
 	private final int BASE_MAX_FOOD = 1000;
 	private final int REACTION = 10 * movement - maxFood;
 	
