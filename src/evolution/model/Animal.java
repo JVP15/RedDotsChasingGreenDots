@@ -2,30 +2,41 @@ package evolution.model;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.util.LinkedList;
+import java.util.Random;
 
 import javax.swing.Icon;
+
+import evolution.mainloop.App;
 
 public abstract class Animal
 {
 	public static final int ANIMAL_DIAMETER = 20;
+	public static int BUFFER = 50;
 	
-	public Animal(int m)
+	public Animal(int evolutionPoints)
 	{
-		food = 0; 
-		movement = m;
-		x = 0; y = 0;
-		vision = 60;
+		Random rand = new Random();
+		
+		x = rand.nextInt(App.TOTAL_WIDTH - 2 * BUFFER)+BUFFER;
+		y = rand.nextInt(App.TOTAL_HEIGHT- 2 * BUFFER)+BUFFER;
+		alive = true;
+		food = (int) (maxFood * .75);
+		
+		allocateStats(evolutionPoints);
 	}
 	
-	public Animal(int m, int x, int y)
+	public Animal(int evolutionPoints, int x, int y)
 	{
-		food = 0; 
-		movement = m;
+		alive = true;
+		food = (int) (maxFood * .5); 
 		this.x = x; this.y = x;
-		vision = 60;
+		
+		allocateStats(evolutionPoints);
 	}
 	
-	public abstract void action();
+	public abstract void action(LinkedList<Animal> visibleAnimals);
+	
 	
 	public void moveTowards(int x1, int y1)
 	{
@@ -45,13 +56,10 @@ public abstract class Animal
 			y = y1;
 		else
 			y = y + movY;
+		
+		changeFood(-movement);
 	}
-	
-	public void move()
-	{
-		x = x + movement;
-	}
-	
+
 	public int getFood()
 	{
 		return food;
@@ -60,6 +68,16 @@ public abstract class Animal
 	public void setFood(int food)
 	{
 		this.food = food;
+	}
+	
+	public void changeFood(int food)
+	{
+		if(this.food + food > maxFood)
+			food = maxFood;
+		else if(this.food + food < 0 - maxFood / 2)
+			this.kill();
+		else
+			this.food += food;
 	}
 
 	public int getMovement()
@@ -96,12 +114,60 @@ public abstract class Animal
 	{
 		return vision;
 	}
+		
+	public int getMaxFood()
+	{
+		return maxFood;
+	}
 	
+	public int getReation()
+	{
+		return REACTION;
+	}
+		
+	public boolean isAlive()
+	{
+		return alive;
+	}
+
+	public void kill()
+	{
+		alive = false;
+	}
+
+	public boolean canSee(Animal other)
+	{
+		if(Math.sqrt( Math.pow( x - other.x, 2) + Math.pow(y - other.y, 2) ) <= vision)
+			return true;
+		
+		return false;
+	}
 	
 	private int food;
 	private int maxFood;
 	private int movement; 
 	private int vision;
+	private boolean alive;
 	private int x; private int y;
+	
+	private final int BASE_MOVEMENT = 10;
+	private final int BASE_VISION = 120;
+	private final int BASE_MAX_FOOD = 1000;
+	private final int REACTION = 10 * movement - maxFood;
+	
+	private void allocateStats(int evolutionPoints)
+	{
+		Random rand = new Random();
+		
+		int pointChange = rand.nextInt(evolutionPoints / 2);
+		evolutionPoints = evolutionPoints - pointChange;
+		vision = (int) (BASE_VISION * 1 + pointChange / 100.0);
+		
+		pointChange = rand.nextInt((evolutionPoints + pointChange) / 2);
+		evolutionPoints = evolutionPoints - pointChange;
+		movement = (int) (BASE_MOVEMENT * 1 + pointChange / 100.0);
+		
+		maxFood =  (int) (BASE_MAX_FOOD * 1 + evolutionPoints / 100.0);
+	}
 }
 

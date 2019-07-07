@@ -5,7 +5,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-import evolution.app.App;
+import evolution.mainloop.App;
+import evolution.mainloop.Field;
 import evolution.model.Animal;
 import evolution.model.Carnivore;
 import evolution.model.Herbivore;
@@ -16,14 +17,14 @@ public class View
 	{
 		frame = new JFrame();
 		frame.setSize(App.TOTAL_WIDTH, App.TOTAL_HEIGHT);
-		Carnivore c = new Carnivore(10, 150, 150);
 		
-		Carnivore c2 = new Carnivore(10, 250, 250);
 		Field f = new Field();
 		
-		f.add(c);
-		f.add(c2);
-		f.add(new Herbivore(20));
+		f.add(new Carnivore(500));
+		//f.add(new Carnivore(100));
+		
+		for(int i = 0; i < 5; i++)
+			f.add(new Herbivore(200));
 		
 		frame.add(f);
 		frame.setVisible(true);

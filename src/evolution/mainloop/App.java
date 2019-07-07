@@ -1,4 +1,4 @@
-package evolution.app;
+package evolution.mainloop;
 
 import javax.swing.JLabel;
 

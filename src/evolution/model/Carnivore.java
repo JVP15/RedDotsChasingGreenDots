@@ -5,45 +5,87 @@ import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
+import java.util.LinkedList;
 import java.util.Random;
 
-import evolution.app.App;
+import evolution.mainloop.App;
 
-enum State {HUNTING, CHASING};
+enum CarnivoreState {HUNTING, CHASING};
 
 public class Carnivore extends Animal
 {
-	private static int BUFFER = 50;
 	
 	public Carnivore(int m)
 	{
 		super(m);	
-		state = State.HUNTING;
+		state = CarnivoreState.HUNTING;
+		target = null;
 		targetX = getX(); targetY = getY();
 	}
 	
 	public Carnivore(int m, int x, int y)
 	{
 		super(m, x, y);
-		state = State.HUNTING;
+		state = CarnivoreState.HUNTING;
 		targetX = getX(); targetY = getY();
 	}
 	
-	public void action()
+	public void action(LinkedList<Animal> visibleAnimals)
 	{
-		if(getX() == targetX && getY() == targetY)
+		for(Animal a: visibleAnimals)
 		{
-			Random r = new Random();
-			
-			targetX = r.nextInt(App.TOTAL_WIDTH - 2 * BUFFER)+BUFFER;
-			targetY = r.nextInt(App.TOTAL_HEIGHT- 2 * BUFFER)+BUFFER;
+			if(a.getClass() == Herbivore.class && target == null)
+			{
+				target = a;
+				state = CarnivoreState.CHASING;
+			}	
 		}
 		
-		moveTowards(targetX, targetY);
+		if(getFood() > getMaxFood() * .75 || ( target != null && !this.canSee(target)))
+		{
+			state = CarnivoreState.HUNTING;
+		}
+		
+		if(state == CarnivoreState.HUNTING)
+		{
+			if(getX() == targetX && getY() == targetY)
+			{
+				Random r = new Random();
+				
+				targetX = r.nextInt(App.TOTAL_WIDTH - 2 * Animal.BUFFER) + Animal.BUFFER;
+				targetY = r.nextInt(App.TOTAL_HEIGHT- 2 * Animal.BUFFER) + Animal.BUFFER;
+			}
+			moveTowards(targetX, targetY);
+		}
+		
+		else if(state == CarnivoreState.CHASING)
+		{
+			targetX = target.getX();
+			targetY = target.getY();
+			
+			moveTowards(targetX, targetY);
+			moveTowards(targetX, targetY);
+			
+			if(getX() == targetX && getY() == targetY)
+			{
+				eat(target);
+				state = CarnivoreState.HUNTING;
+			}
+			
+		}
+		
 	}
 	
-	private State state;
+	private CarnivoreState state;
+	private Animal target; 
 	private int targetX; private int targetY;
+
+	private void eat(Animal a)
+	{
+		this.changeFood(a.getMaxFood() / 3);
+		a.kill();
+		target = null;
+	}
 	
 	
 }
